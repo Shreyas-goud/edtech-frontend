@@ -56,6 +56,9 @@ function Courses() {
 
   const handleBuy = async (courseId) => {
     setPurchasedIds((prev) => [...prev, courseId]);
+    console.log(purchasedIds);
+    setTimeout(2000);
+    console.log(purchasedIds);
     navigate("/my-courses");
     return;
 
