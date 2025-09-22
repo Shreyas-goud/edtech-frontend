@@ -5,6 +5,7 @@ import CoursesNavbar from "../components/CoursesNavbar";
 import "./Courses.css";
 import { toast } from "react-toastify";
 import { getAuthHeader } from "../utils/auth";
+import jwt_decode from "jwt-decode";
 
 function Courses() {
   const [courses, setCourses] = useState([]);
@@ -13,6 +14,9 @@ function Courses() {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const token = localStorage.getItem("token");
   const isLoggedIn = !!token;
+
+  const decodedToken = jwt_decode(token);
+  const userId = decodedToken.id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,8 +68,27 @@ function Courses() {
       return;
     }
     setPurchasedIds((prev) => [...prev, courseId]);
-    toast.success("Course unlocked!");
-    navigate("/my-courses");
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/v1/user/purchases`, {
+        method: "POST", // must specify method
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          courseId,
+        }),
+      });
+
+      const data = await res.json();
+      toast.success("Course unlocked!");
+      navigate("/my-courses");
+    } catch (error) {
+      console.error("Payment failed", err);
+      toast.error("Payment initiation failed");
+    }
+
     // const success = await loadRazorpayScript();
     // if (!success) {
     //   toast.error("Failed to load Razorpay");
