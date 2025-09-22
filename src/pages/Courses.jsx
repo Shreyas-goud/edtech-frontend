@@ -55,6 +55,10 @@ function Courses() {
   };
 
   const handleBuy = async (courseId) => {
+    setPurchasedIds((prev) => [...prev, courseId]);
+    navigate("/my-courses");
+    return;
+
     if (!isLoggedIn) {
       window.dispatchEvent(
         new CustomEvent("open-auth-modal", {
