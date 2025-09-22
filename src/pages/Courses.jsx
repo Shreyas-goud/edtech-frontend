@@ -55,13 +55,6 @@ function Courses() {
   };
 
   const handleBuy = async (courseId) => {
-    setPurchasedIds((prev) => [...prev, courseId]);
-    console.log(purchasedIds);
-    setTimeout(2000);
-    console.log(purchasedIds);
-    navigate("/my-courses");
-    return;
-
     if (!isLoggedIn) {
       window.dispatchEvent(
         new CustomEvent("open-auth-modal", {
@@ -70,92 +63,94 @@ function Courses() {
       );
       return;
     }
+    setPurchasedIds((prev) => [...prev, courseId]);
+    toast.success("Course unlocked!");
+    navigate("/my-courses");
+    // const success = await loadRazorpayScript();
+    // if (!success) {
+    //   toast.error("Failed to load Razorpay");
+    //   return;
+    // }
 
-    const success = await loadRazorpayScript();
-    if (!success) {
-      toast.error("Failed to load Razorpay");
-      return;
-    }
+    // try {
+    //   const res = await fetch(`${BACKEND_URL}/api/v1/payment/create-order`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       ...getAuthHeader(),
+    //     },
+    //     body: JSON.stringify({ courseId }),
+    //   });
 
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/v1/payment/create-order`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthHeader(),
-        },
-        body: JSON.stringify({ courseId }),
-      });
+    //   const data = await res.json();
+    //   if (!res.ok) {
+    //     toast.error(data.message || "Could not start payment");
+    //     return;
+    //   }
 
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.message || "Could not start payment");
-        return;
-      }
+    //   const { orderId, amount, currency, courseTitle, key } = data;
 
-      const { orderId, amount, currency, courseTitle, key } = data;
+    //   const options = {
+    //     key,
+    //     amount,
+    //     currency,
+    //     name: "EdTechBook",
+    //     description: courseTitle,
+    //     order_id: orderId,
+    //     handler: async function (response) {
+    //       try {
+    //         const verifyRes = await fetch(
+    //           `${BACKEND_URL}/api/v1/payment/verify`,
+    //           {
+    //             method: "POST",
+    //             headers: {
+    //               "Content-Type": "application/json",
+    //               ...getAuthHeader(),
+    //             },
+    //             body: JSON.stringify({
+    //               razorpay_order_id: response.razorpay_order_id,
+    //               razorpay_payment_id: response.razorpay_payment_id,
+    //               razorpay_signature: response.razorpay_signature,
+    //               courseId,
+    //             }),
+    //           }
+    //         );
 
-      const options = {
-        key,
-        amount,
-        currency,
-        name: "EdTechBook",
-        description: courseTitle,
-        order_id: orderId,
-        handler: async function (response) {
-          try {
-            const verifyRes = await fetch(
-              `${BACKEND_URL}/api/v1/payment/verify`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  ...getAuthHeader(),
-                },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  courseId,
-                }),
-              }
-            );
+    //         const verifyData = await verifyRes.json();
 
-            const verifyData = await verifyRes.json();
+    //         if (!verifyRes.ok) {
+    //           toast.error(verifyData.message || "Verification failed");
+    //           return;
+    //         }
 
-            if (!verifyRes.ok) {
-              toast.error(verifyData.message || "Verification failed");
-              return;
-            }
+    //         toast.success("Payment successful! Course unlocked.");
+    //         setPurchasedIds((prev) => [...prev, courseId]);
+    //         navigate("/my-courses");
+    //       } catch (err) {
+    //         toast.error("Error verifying payment");
+    //         console.error("Verification failed", err);
+    //       }
+    //     },
+    //     prefill: {
+    //       name: "Student",
+    //       email: "student@example.com",
+    //     },
+    //     theme: {
+    //       color: "#3f51b5",
+    //     },
+    //     modal: {
+    //       ondismiss: function () {
+    //         toast.info("Payment cancelled");
+    //       },
+    //     },
+    //   };
 
-            toast.success("Payment successful! Course unlocked.");
-            setPurchasedIds((prev) => [...prev, courseId]);
-            navigate("/my-courses");
-          } catch (err) {
-            toast.error("Error verifying payment");
-            console.error("Verification failed", err);
-          }
-        },
-        prefill: {
-          name: "Student",
-          email: "student@example.com",
-        },
-        theme: {
-          color: "#3f51b5",
-        },
-        modal: {
-          ondismiss: function () {
-            toast.info("Payment cancelled");
-          },
-        },
-      };
-
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.open();
-    } catch (err) {
-      console.error("Payment failed", err);
-      toast.error("Payment initiation failed");
-    }
+    //   const paymentObject = new window.Razorpay(options);
+    //   paymentObject.open();
+    // } catch (err) {
+    //   console.error("Payment failed", err);
+    //   toast.error("Payment initiation failed");
+    // }
   };
 
   const handleCourseClick = (courseId) => {
