@@ -5,7 +5,7 @@ import CoursesNavbar from "../components/CoursesNavbar";
 import "./Courses.css";
 import { toast } from "react-toastify";
 import { getAuthHeader } from "../utils/auth";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 function Courses() {
   const [courses, setCourses] = useState([]);
@@ -15,7 +15,7 @@ function Courses() {
   const token = localStorage.getItem("token");
   const isLoggedIn = !!token;
 
-  const decodedToken = jwt_decode(token);
+  const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
 
   useEffect(() => {
