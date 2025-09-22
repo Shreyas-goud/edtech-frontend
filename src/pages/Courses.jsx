@@ -85,7 +85,7 @@ function Courses() {
       toast.success("Course unlocked!");
       navigate("/my-courses");
     } catch (error) {
-      console.error("Payment failed", err);
+      console.error("Payment failed", error);
       toast.error("Payment initiation failed");
     }
 
