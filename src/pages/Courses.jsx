@@ -42,7 +42,7 @@ function Courses() {
     };
 
     fetchData();
-  }, [isLoggedIn, token, BACKEND_URL]);
+  }, [isLoggedIn, token, BACKEND_URL, purchasedIds]);
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
